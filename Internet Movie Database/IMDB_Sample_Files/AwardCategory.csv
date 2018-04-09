@@ -1,0 +1,74 @@
+AwardCategoryID,AwardHeaderID,AwardCategoryName
+1,1,Best Motion Picture of the Year
+2,1,Best Performance by an Actor in a Leading Role
+3,2,Best Performance by an Actress in a Leading Role
+4,3,Best Achievement in Directing
+5,4,Best Achievement in Music Written for Motion Pictures Original Song
+6,5,Best Achievement in Music Written for Motion Pictures Original Score
+7,6,Best Foreign Language Film of the Year
+8,7,Best Short Film Live Action
+9,8,Best Documentary Feature
+10,9,Best Documentary Short Subject
+11,10,Best Performance by an Actor in a Supporting Role
+12,11,Best Animated Feature Film of the Year
+13,12,Best Achievement in Visual Effects
+14,13,Best Achievement in Sound Mixing
+15,14,Best Achievement in Sound Editing
+16,14,Best Achievement in Editing
+17,14,Best Achievement in Cinematography
+18,14,Best Achievement in Makeup and Hairstyling
+19,14,Best Achievement in Production Design
+20,14,Best Achievement in Costume Design
+21,15,Best Performance by an Actress in a Supporting Role
+22,16,Best Writing Screenplay Based on Material Previously Produced or Published
+23,17,Best Writing Screenplay Written Directly for the Screen
+24,18,Best Technician
+25,19,Best Motion Picture of the Year
+26,20,Best Performance by an Actor in a Leading Role
+27,21,Best Performance by an Actress in a Leading Role
+28,22,Best Achievement in Directing
+29,23,Best Achievement in Music Written for Motion Pictures Original Song
+30,24,Best Achievement in Music Written for Motion Pictures Original Score
+31,25,Best Foreign Language Film of the Year
+32,26,Best Short Film Live Action
+33,27,Best Documentary Feature
+34,27,Best Documentary Short Subject
+35,28,Best Performance by an Actor in a Supporting Role
+36,29,Best Animated Feature Film of the Year
+37,30,Best Achievement in Visual Effects
+38,31,Best Achievement in Sound Mixing
+39,32,Best Achievement in Sound Editing
+40,35,Best Achievement in Makeup and Hairstyling
+41,36,Best Achievement in Production Design
+42,36,Best Achievement in Costume Design
+43,36,Best Performance by an Actress in a Supporting Role
+44,36,Best Writing Screenplay Based on Material Previously Produced or Published
+45,36,Best Writing Screenplay Written Directly for the Screen
+46,36,Best Technician
+47,37,Best Motion Picture of the Year
+48,38,Best Performance by an Actor in a Leading Role
+49,39,Best Performance by an Actress in a Leading Role
+50,40,Best Achievement in Directing
+51,40,Best Achievement in Music Written for Motion Pictures Original Song
+52,40,Best Achievement in Music Written for Motion Pictures Original Score
+53,40,Best Mimicry
+54,41,Best Writing Screenplay Based on Material Previously Produced or Published
+55,42,Best Writing Screenplay Written Directly for the Screen
+56,43,Best Technician
+57,44,Best Motion Picture of the Year
+58,45,Best Performance by an Actor in a Leading Role
+59,46,Best Performance by an Actress in a Leading Role
+60,47,Best Achievement in Directing
+61,48,Best Achievement in Music Written for Motion Pictures Original Song
+62,49,Best Achievement in Music Written for Motion Pictures Original Score
+63,50,Best Foreign Language Film of the Year
+64,51,Best Short Film Live Action
+65,52,Best Documentary Feature
+66,53,Best Documentary Short Subject
+67,54,Best Performance by an Actor in a Supporting Role
+68,55,Best Animated Feature Film of the Year
+69,56,Best Achievement in Visual Effects
+70,57,Best Achievement in Sound Mixing
+71,58,Best Achievement in Sound Editing
+72,58,Best Achievement in Editing
+73,58,Best creativity

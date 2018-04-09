@@ -1,0 +1,43 @@
+ShowSeasonEpisodeID,TVShowSeasonID,EpisodName,AirDate
+1,1,Winter is coming,2011-04-17
+2,1,The Kingsroad,2011-04-24
+3,1,Lord's Snow,2011-05-1
+4,2,Cripples Bastards and Broken Things,2011-05-8
+5,2,The Wolf and the Lion,2011-05-15
+6,3,A Golden Crown,2011-05-22
+7,4,You Win or You Die,2011-05-29
+8,5,The Pointy End,2011-06-5
+9,6,Baelor,2011-06-12
+10,6,Fire and Blood,2011-06-19
+11,7,The North Remembers,2012-04-1
+12,7,The Night Lands,2012-04-8
+13,7,What Is Dead May Never Die,2012-04-15
+14,8,Garden of Bones,2012-04-22
+15,9,The Ghost of Harrenhal,2012-04-29
+16,10,The Old Gods and the New,2012-05-6
+17,11,A Man Without Honor,2012-05-13
+18,12,The Prince of Winterfell,2012-05-20
+19,12,Blackwater,2012-05-27
+20,13,Valar Morghulis,2012-06-3
+21,14,Valar Dohaeris,2013-03-31
+22,15,Dark Wings Dark Words,2013-06-7
+23,15,Walk of Punishment,2013-06-14
+24,16,And Now His Watch Is Ended,2013-06-21
+25,17,Kissed by Fire,2013-06-28
+26,18,The Climb,2013-05-5
+27,19,The Bear and the Maiden Fair,2013-05-12
+28,20,Second Sons,2013-05-19
+29,21,The Rains of Castamere,2013-06-2
+30,22,Mhysa,2013-06-9
+31,23,Two Swords,2014-04-6
+32,23,The Lion and the Rose,2014-04-13
+33,24,Breaker of Chains,2014-04-20
+34,25,Oathkeeper,2014-04-27
+35,26,First of His Name,2014-05-4
+36,27,The Laws of Gods and Men,2014-05-11
+37,27,Mockingbird,2014-05-18
+38,27,The Mountain and the Viper,2014-06-1
+39,28,The Watchers on the Wall,2014-06-8
+40,29,The Children,2014-06-15
+41,29,The Wars to Come,2015-04-12
+42,29,The House of Black and White,2015-04-19

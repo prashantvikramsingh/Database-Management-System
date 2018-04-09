@@ -1,0 +1,43 @@
+FilmingLocationDetailId,FilmingLocationHeaderID,City,State
+1,1,Boston,MA
+2,2,Delhi,NEW DELHI
+3,2,Mumbai,MAHARASHTRA
+4,3,Beijing,HEBEI
+5,4,London,NA
+6,5,Moscow,MOSKVA
+7,6,Sydney,WA
+8,6,Perth,SA
+9,7,Tokyo,NA
+10,8,Dallas,TEXAS
+11,9,Las Vegas,CALIFORNIA
+12,10,Florida,NA
+13,11,Hawai,NA
+14,12,Dallas,TEXAS
+15,13,Las Vegas,CALIFORNIA
+16,14,Florida,NA
+17,15,Hawai,NA
+18,16,Dallas,TEXAS
+19,17,Las Vegas,CALIFORNIA
+20,18,London,NA
+21,19,Yorkshire,NA
+22,20,Manchester,NA
+23,21,London,NA
+24,22,Yorkshire,NA
+25,23,Manchester,NA
+26,24,London,NA
+27,25,Yorkshire,NA
+28,26,Manchester,NA
+29,27,London,NA
+30,28,Yorkshire,NA
+31,29,Manchester,NA
+32,30,Sydney,WA
+33,31,Perth,SA
+34,32,Sydney,WA
+35,33,Perth,SA
+36,34,Sydney,WA
+37,35,Perth,SA
+38,36,Sydney,WA
+39,37,Perth,SA
+40,38,Sydney,WA
+41,39,Perth,SA
+42,40,Sydney,WA

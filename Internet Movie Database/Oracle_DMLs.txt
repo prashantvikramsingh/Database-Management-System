@@ -1,0 +1,205 @@
+Create OR REPLACE Trigger Update_Votes
+Before Insert OR Update
+on UserRating
+FOR EACH ROW
+Declare 
+		currentMovieOrTVID Int;
+		currentRating Int;
+		oldRating Int;
+		ratingId Int;
+BEGIN	
+		currentMovieOrTVID := :new.MovieOrTVID;
+		currentRating := :new.rating;
+		oldRating := :old.rating;
+		
+		select RatingId into ratingId
+		from MovieOrTV
+		where movieortvid = currentMovieOrTVID;
+		
+		Update		Rating	
+		set 	  	NoOfVotes = NoOfVotes - 1
+		where	  	MovieOrTVID = currentMovieOrTVID and Rating = oldRating;
+		
+		Update		Rating	
+		set 	  	NoOfVotes = NoOfVotes + 1
+		where	  	MovieOrTVID = currentMovieOrTVID and Rating = currentRating;
+End;
+
+
+--------------------------------------------------------------------------
+
+Create OR REPLACE Trigger Update_Rating
+Before Insert OR Update
+on Rating
+FOR EACH ROW
+Declare 
+    currentMovieOrTVID Int;
+		currentRating Int;
+BEGIN	
+		currentMovieOrTVID := :new.MovieOrTVID;
+		
+		Select	Sum(r.rating*r.noofvotes)/Sum(r.noofvotes) into currentRating
+		from	rating r
+		where	MovieOrTVID = currentMovieOrTVID;
+		
+		Update		MovieOrTV
+		set 	  	Rating = currentRating
+		where	  	MovieOrTVID = currentMovieOrTVID;
+End;
+
+----------------------------------------------------------------------------
+
+Create OR REPLACE Trigger Check_Update_RemainingSeats
+BEFORE Insert OR Update
+on Tickets
+FOR EACH ROW
+Declare			
+			SeatsRemaining Int;
+BEGIN		
+     
+		Select 	TotalSeatsAvailable into SeatsRemaining
+		from	showtimes
+		where	TheatreID = :new.TheatreID and ShowTimesID = :new.ShowTimesID;
+		
+		if(SeatsRemaining < :new.NoOfSeatsBooked) then
+			declare    
+			user_xcep EXCEPTION;
+			PRAGMA EXCEPTION_INIT( user_xcep, -20001 );
+			begin
+				raise user_xcep;
+			end;
+		end if;
+    
+    Update	  showtimes	
+		set 	    TotalSeatsAvailable = TotalSeatsAvailable - :new.NoOfSeatsBooked
+		where	    TheatreID = :new.TheatreID and ShowTimesID = :new.ShowTimesID;
+End;
+
+
+---------------------------------------------------------------------------------
+
+Create OR REPLACE Trigger Check_Movie
+BEFORE Insert OR Update
+on MovieTheatre
+FOR EACH ROW
+Declare			
+			movieCount Int;
+BEGIN		
+     
+		Select 	count(*) into movieCount
+		from	MovieOrTV
+		where	MovieOrTVID = :new.MovieOrTVID and Type = 'Movie';
+		
+		if(movieCount <= 0) then
+			declare    
+			user_xcep EXCEPTION;
+			PRAGMA EXCEPTION_INIT( user_xcep, -20001 );
+			begin
+				raise user_xcep;
+			end;
+		end if;
+End;
+
+-------------------------------------------------------------------------------------------
+
+Create OR REPLACE Trigger Check_TV
+BEFORE Insert OR Update
+on TVShowSeason
+FOR EACH ROW
+Declare			
+			movieCount Int;
+BEGIN		
+     
+		Select 	count(*) into movieCount
+		from	MovieOrTV
+		where	MovieOrTVID = :new.MovieOrTVID and Type = 'TV';
+		
+		if(movieCount <= 0) then
+			declare    
+			user_xcep EXCEPTION;
+			PRAGMA EXCEPTION_INIT( user_xcep, -20001 );
+			begin
+				raise user_xcep;
+			end;
+		end if;
+End;
+
+---------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE GetRating(
+inMovieOrTVID IN INTEGER
+)
+AS
+	Rating decimal(10,2);
+	recordCount Int;
+	movieName varchar2(40);
+	Begin
+		select count(*) into recordCount
+		from	MovieOrTV
+		where	MovieOrTVID = inMovieOrTVID;	
+		
+		if(recordCount <= 0) then		
+		DBMS_OUTPUT.PUT_LINE('No Movie with given details!!!!');
+		end if;
+		
+		select Sum(r.rating*r.noofvotes)/Sum(r.noofvotes) into Rating
+		from	rating r
+		where r.MovieOrTVID = inMovieOrTVID;
+		select m.name into movieName
+		from movieortv m
+		where m.MovieOrTVID = inMovieOrTVID;
+		DBMS_OUTPUT.PUT_LINE('MovieName is: '||movieName);
+		DBMS_OUTPUT.PUT_LINE('Rating is: '||to_char(Rating));
+	end;
+
+
+---------------------------------------------------------------------------------
+
+create or replace view TOPActressView 
+as
+select count(*) as AwardCount, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from Star s
+inner join AwardDetails ad
+	on s.StarID = ad.StarID
+where ad.Status = 'Won' and s.Gender = 'F' and ROWNUM <= 50
+group by concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName)))
+order by AwardCount desc, StarName;
+
+create view TOPActorsView 
+as
+select count(*) as AwardCount, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from Star s
+inner join AwardDetails ad
+	on s.StarID = ad.StarID
+where ad.Status = 'Won' and s.Gender = 'M' and ROWNUM <= 50
+group by concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName)))
+order by AwardCount desc, StarName;
+
+
+create view TOPDirectorsView 
+as
+select count(*) as AwardCount, concat(rtrim(d.DirFirstName),concat(' ',ltrim(d.DirLastName))) as DirectorName
+from Director d
+inner join AwardDetails ad
+	on d.DirectorID = ad.DirectorID
+where ad.Status = 'Won' and ROWNUM <= 50
+group by concat(rtrim(d.DirFirstName),concat(' ',ltrim(d.DirLastName)))
+order by AwardCount desc, DirectorName;
+
+
+create view TOPProducersView 
+as
+select count(*) as AwardCount, concat(rtrim(p.ProdFirstName),concat(' ',ltrim(p.ProdLastName))) as ProducerName
+from Producer p
+inner join AwardDetails ad
+	on p.ProducerID = ad.ProducerID
+where ad.Status = 'Won' and ROWNUM <= 50
+group by concat(rtrim(p.ProdFirstName),concat(' ',ltrim(p.ProdLastName)))
+order by AwardCount desc, ProducerName;
+
+create view TOPPopularTVOrMovieView 
+as
+select m.Name, m.Popularity
+from MovieOrTV m
+where ROWNUM <= 50
+order by m.Popularity;

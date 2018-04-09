@@ -1,0 +1,306 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_full_bkp`()
+block1: BEGIN
+	DECLARE tab_name char(50); 
+	DECLARE q varchar(1500); 
+	DECLARE done INTEGER DEFAULT 0;
+	DECLARE cursorBackupTable CURSOR FOR SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='railway'  and table_type='BASE TABLE';
+	DROP DATABASE IF EXISTS railway_backup;
+	CREATE DATABASE railway_backup;
+	open cursorBackupTable;
+		block2: begin
+			DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1; 
+			cur_loop:Loop
+				FETCH cursorBackupTable into tab_name;
+					IF done= 1 THEN LEAVE cur_loop;				
+					END IF; 
+				SET @q=CONCAT('DROP TABLE IF EXISTS railway_backup.',tab_name);
+					PREPARE stmt FROM @q;
+					EXECUTE stmt;
+					DEALLOCATE PREPARE stmt;
+				SET @q=CONCAT('CREATE TABLE railway_backup.',tab_name,' AS SELECT * FROM railway.',tab_name,' WHERE 1=1');
+					PREPARE stmt FROM @q;
+					EXECUTE stmt;
+					DEALLOCATE PREPARE stmt;
+			END LOOP cur_loop;
+		END block2;
+	close cursorBackupTable;
+END block1
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE EVENT `FULL_BKP` ON SCHEDULE EVERY 1 WEEK STARTS '2016-12-12 00:00:00' DO CALL railway.sp_full_backup();
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE DEFINER=`root`@`localhost` TRIGGER ticket_insert_check 
+Before INSERT ON passengerbooking 
+FOR EACH ROW
+Begin
+
+Declare varTrainID Int;
+Declare varTravelDate Date;
+Declare varTrainStatusID Int;
+Declare varClassCategoryID Int;
+Declare varCategory char(20);
+Declare varCountRemainingSeats Int;
+Declare varCountSeatsWaiting Int;
+
+Set varTrainID = NEW.TrainID;
+Set varTravelDate = NEW.TravelDate;
+Set varCategory = NEW.ClassType;
+
+Select TrainStatusID into varTrainStatusID
+from TrainStatus as ts
+where ts.TrainID = varTrainID and ts.RunDate = varTravelDate;
+
+select ClassCategoryID into varClassCategoryID
+from ClassCategory as cc1
+where cc1.TrainID = varTrainID and cc1.TrainStatusID = varTrainStatusID and cc1.Category = varCategory;
+
+select cc2.SeatsRemaining into varCountRemainingSeats
+from ClassCategory as cc2
+where cc2.ClassCategoryID = varClassCategoryID;
+
+select cc3.SeatsWaiting into varCountSeatsWaiting
+from ClassCategory as cc3
+where cc3.ClassCategoryID = varClassCategoryID;
+
+if(varCountRemainingSeats > 0) then
+	update ClassCategory as cc4
+	set cc4.SeatsRemaining = cc4.SeatsRemaining - 1, cc4.SeatsBooked = cc4.SeatsBooked + 1
+	where cc4.ClassCategoryID = varClassCategoryID;
+end if;
+
+if(varCountRemainingSeats = 0) then
+		if(varCountSeatsWaiting < 10) then
+			update ClassCategory as cc5
+			set cc5.SeatsWaiting = cc5.SeatsWaiting + 1
+			where cc5.ClassCategoryID = varClassCategoryID;
+		else
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Waiting Full!!!!';
+		end if;
+end if;
+
+End
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE DEFINER=`root`@`localhost` TRIGGER ticket_generate_check 
+After INSERT ON passengerbooking 
+FOR EACH ROW
+Begin
+
+Declare varPassengerBookingID Int;
+Declare varTrainID Int;
+Declare varTravelDate Date;
+Declare varTrainStatusID Int;
+Declare varClassCategoryID Int;
+Declare varCategory char(20);
+Declare varCountRemainingSeats Int;
+Declare varCountSeatsWaiting Int;
+Declare varSeatNumber Int;
+Declare varCountPassengerTicket Int;
+
+Set varPassengerBookingID = NEW.PassengerBookingID;
+Set varTrainID = NEW.TrainID;
+Set varTravelDate = NEW.TravelDate;
+Set varCategory = NEW.ClassType;
+
+Select TrainStatusID into varTrainStatusID
+from TrainStatus as ts
+where ts.TrainID = varTrainID and ts.RunDate = varTravelDate;
+
+select ClassCategoryID into varClassCategoryID
+from ClassCategory as cc1
+where cc1.TrainID = varTrainID and cc1.TrainStatusID = varTrainStatusID and cc1.Category = varCategory;
+
+select cc2.SeatsRemaining into varCountRemainingSeats
+from ClassCategory as cc2
+where cc2.ClassCategoryID = varClassCategoryID;
+
+select cc3.SeatsWaiting into varCountSeatsWaiting
+from ClassCategory as cc3
+where cc3.ClassCategoryID = varClassCategoryID;
+
+Select Max(SeatNumber) into varSeatNumber
+from PassengerTicket;
+
+Select count(*) into varCountPassengerTicket
+from PassengerTicket;
+
+if(varCountRemainingSeats > 0) then
+	if(varCountPassengerTicket > 0) then
+		insert into PassengerTicket(PassengerBookingID, SeatNumber, BookingDate, TicketStatus) 
+		values (varPassengerBookingID, varSeatNumber+1, sysdate(), 'Confirmed');
+	else
+		insert into PassengerTicket(PassengerBookingID, SeatNumber, BookingDate, TicketStatus) 
+		values (varPassengerBookingID, 1, sysdate(), 'Confirmed');
+	end if;
+end if;
+
+if(varCountRemainingSeats = 0) then
+	if(varCountSeatsWaiting < 10) then
+		if(varCountPassengerTicket > 0) then
+			insert into PassengerTicket(PassengerBookingID, SeatNumber, BookingDate, TicketStatus) 
+			values (varPassengerBookingID, 0, sysdate(), 'Waiting');
+		else
+			insert into PassengerTicket(PassengerBookingID, SeatNumber, BookingDate, TicketStatus) 
+			values (varPassengerBookingID, 0, sysdate(), 'Waiting');
+		end if;
+	else
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Waiting Full!!!!';
+	end if;
+end if;
+
+End
+-----------------------------------------------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE TrainDetail(
+IN TrainID INTEGER
+)
+block1:BEGIN
+	select t.TrainName, t.TrainType/*, ts.DaysName*/, s.StationName, tst.Type, tst.ArrivalTime, tst.DepartureTime
+	from train as t
+	/*inner join trainstatus as ts
+		on t.TrainID = ts.TrainID*/
+	inner join trainstationtype as tst
+		on t.TrainID = tst.TrainID
+	inner join station as s
+		on	t.TrainID = tst.TrainID and tst.StationID = s.StationID;
+END block1
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `Ticket_Status`(PNR INT) RETURNS varchar(30) CHARSET utf8
+    DETERMINISTIC
+BEGIN 
+	DECLARE A varchar(30);
+	SELECT 
+    t.ticketstatus
+INTO A FROM
+    passengerticket AS t
+WHERE
+    t.PNR = PNR;
+	RETURN A;
+END
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SeatDetailsForATrain`(TrainId Int, RunDate Date , Category Char(30))
+BEGIN
+	select t.TrainName,cc.Category,ts.RunDate,cc.SeatsRemaining, cc.SeatsWaiting 
+    from train as t
+    inner join TrainStatus as ts
+		on t.TrainID = ts.TrainID
+	inner join ClassCategory cc 
+		on ts.TrainStatusID = cc.TrainStatusID
+    where ts.TrainID = TrainID and ts.RunDate = RunDate and cc.Category= Category;
+END
+
+--------------------------------------------------------------------------------------------------------------------------------------
+# Check Passenger Station with Train Station
+Delimiter $$
+CREATE TRIGGER station_insert_check 
+Before INSERT ON PassengerStationType 
+FOR EACH ROW
+block1: BEGIN
+    DECLARE finished1 INTEGER default 0;
+    DECLARE counter INTEGER default 0;
+	DECLARE tempPasngrStationNumber INTEGER;
+	DECLARE tempTrainStationNumber INTEGER;
+    Set tempPasngrStationNumber = (SELECT NEW.StationID from PassengerStationType where PassengerBookingID = NEW.PassengerBookingID);
+    
+    If(!(tempPasngrStationNumber IN (SELECT StationID FROM TrainStationType where TrainId = 
+    (Select TrainId from PassengerBooking where PassengerBookingId = NEW.PassengerBookingId)))) then
+	SIGNAL SQLSTATE '45000';
+	end if;
+END block1;
+$$
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+select s.StaffName, t.TrainName
+from staff as s
+inner join stafftrain as st
+	on s.StaffID = st.StaffID
+inner join train as t
+	on st.TrainID = t.TrainID
+order by s.StaffName;
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `Ticket_Price`(PNR INT) RETURNS decimal(10,2)
+    DETERMINISTIC
+BEGIN 
+	DECLARE PassengerBookingId Int(11);
+    DECLARE TrainID Int(11);
+	Declare SourceStationId Int(11);
+    Declare DestinationStationId Int(11);
+    Declare SourceDistance Int(11);
+    Declare DestinationDistance Int(11);
+    Declare TicketPrice decimal(10,2);    
+    
+    Select 	pt.PassengerBookingId into PassengerBookingId
+    from 	PassengerTicket as pt
+    where 	pt.PNR = PNR;
+    
+    Select 	pb.TrainId into TrainID
+    from 	PassengerBooking as pb
+    where 	pb.PassengerBookingId = PassengerBookingId;
+    
+    Select 	pst.StationId into SourceStationId
+    from 	PassengerStationType as pst
+    where 	pst.PassengerBookingId = PassengerBookingId and pst.type = 'Source';
+    
+    Select 	pst.StationId into DestinationStationId
+    from 	PassengerStationType as pst
+    where 	pst.PassengerBookingId = PassengerBookingId and pst.type = 'Destination';
+    
+    Select 	tst.Distance into SourceDistance
+    from 	TrainStationType as tst
+    where 	tst.TrainId = TrainID and tst.StationId = SourceStationId;
+    
+    Select 	tst.Distance into DestinationDistance
+    from 	TrainStationType as tst
+    where 	tst.TrainId = TrainID and tst.StationId = DestinationStationId;
+    
+    Set 	TicketPrice = ABS((DestinationDistance - SourceDistance) * 1.2);
+    
+    return	TicketPrice;
+END
+------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `TrainStation`(
+IN StationId INTEGER
+)
+block1:BEGIN
+	select s.StationName, t.TrainName, t.TrainType, tst.Type, tst.ArrivalTime, tst.DepartureTime
+	from Station as s
+    inner join trainstationtype as tst
+		on s.StationID = tst.StationID
+	inner join train as t
+		on tst.TrainID = t.TrainID
+	where tst.StationID = StationId;
+END block1
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Delimiter $$
+CREATE TRIGGER staff_insert_check 
+Before INSERT ON StaffTrain 
+FOR EACH ROW
+block1: BEGIN
+	DECLARE varStaffID INTEGER;
+	DECLARE varRole Varchar(20);
+	DECLARE MESSAGE_TEXT Varchar(50);
+	Set varStaffID = NEW.StaffID;
+	Select Role into varRole from Staff where StaffId = varStaffID;
+	
+	If varRole != 'TT'  then
+		SIGNAL SQLSTATE '45000';
+		SET MESSAGE_TEXT = 'You are not authorized!!!!';
+	end if;
+    
+END block1;
+$$

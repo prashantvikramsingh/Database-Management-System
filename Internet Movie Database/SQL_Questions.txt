@@ -1,0 +1,92 @@
+select m.Name, m.Type, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from MovieOrTV as m
+inner join StarMovie as sm
+	on m.MovieORTVID = sm.MovieORTVID
+inner join Star as s
+	on sm.StarID = s.StarID
+inner join GenreMovie as gm
+	on m.MovieORTVID = gm.MovieORTVID
+inner join Genre as g
+	on gm.GenreID = g.GenreID
+where g.GenreCategoryName like '%Family%'
+and s.Gender = 'F';
+
+---------------------------------------------------------------------------------------------
+
+
+select m.Name, count(*) as TotalAwards, rank() OVER (ORDER BY count(*) DESC) AS Rank
+from MovieOrTV as m
+inner join AwardHeader as ah
+	on m.MovieORTVID = ah.MovieORTVID
+inner join AwardCategory as ac
+	on ah.AwardHeaderID = ac.AwardHeaderID
+inner join AwardDetails as ad
+	on ac.AwardCategoryID = ad.AwardCategoryID and ac.AwardHeaderID = ad.AwardHeaderID
+where ad.Status = 'Won' and m.Type = 'TV'
+group by m.Name;
+
+
+----------------------------------------------------------------------------------------------
+
+SELECT genre.GenreCategoryName, SUM(movieOrTV.GrossCollection) AS Revenue
+FROM MovieOrTV movieOrTV 
+INNER JOIN GenreMovie genreMovie 
+	ON movieOrTV.MovieORTVID = genreMovie.MovieORTVID
+INNER JOIN Genre genre 
+	ON genreMovie.GenreID = genre.GenreID
+INNER JOIN AwardHeader awardHeader 
+	ON movieOrTV.MovieORTVID = awardHeader.MovieORTVID
+INNER JOIN AwardCategory awardCategory 
+	ON awardHeader.AwardHeaderID = awardCategory.AwardHeaderID
+INNER JOIN AwardDetails awardDetails 
+	ON awardCategory.AwardCategoryID = awardDetails.AwardCategoryID
+WHERE awardDetails.Status LIKE '%Nominate%' and movieOrTV.Type = 'Movie'
+GROUP BY rollup(genre.GenreCategoryName)
+ORDER BY genre.GenreCategoryName;
+
+------------------------------------------------------------------------------------------------
+
+
+SELECT M.Name AS "Movie Name" , Sum(T.NoOfSeatsBooked) AS "TotalTicketSold"
+FROM MovieORTV AS M
+INNER JOIN MovieTheatre AS MT 
+	ON M.MovieORTVID = MT.MovieORTVID
+INNER JOIN Theatre AS TH 
+	ON MT.TheatreID = TH.TheatreID
+INNER JOIN ShowTimes AS ST      
+	ON TH.TheatreID = ST.TheatreID
+INNER JOIN Tickets T
+	ON ST.ShowTimesID = T.ShowTimesID and ST.TheatreID = T.TheatreID
+group by M.Name
+ORDER BY  TotalTicketSold desc;
+
+
+----------------------------------------------------------------------------------------------------------------
+
+WITH CTE AS(
+
+SELECT  genre.GenreCategoryName GenreCategoryName, movieOrTV.Name Name, movieOrTV.Rating Rating,releaseDate.ReleaseDate ReleaseDate,
+DATEPART(Year,DateAdd(Year,+1,releaseDate.ReleaseDate)) OneYearLater,
+RANK ()OVER (PARTITION BY genre.GenreCategoryName order by movieOrTV.Rating DESC) AS RowNo
+FROM MovieOrTV movieOrTV 
+INNER JOIN GenreMovie genreMovie 
+	ON movieOrTV.MovieORTVID = genreMovie.MovieORTVID
+INNER JOIN Genre genre 
+	ON genreMovie.GenreID = genre.GenreID
+INNER JOIN ReleaseDate releaseDate 
+	ON movieOrTV.MovieORTVID = releaseDate.MovieORTVID
+WHERE LEFT(releaseDate.ReleaseDate,4) <= DATEPART(Year,DateAdd(Year,+1,releaseDate.ReleaseDate)) 
+GROUP BY genre.GenreCategoryName,movieOrTV.Name, movieOrTV.Rating,releaseDate.ReleaseDate
+)
+SELECT GenreCategoryName,Name,Rating,ReleaseDate,OneYearLater FROM CTE WHERE RowNo = 1;
+ 
+ 
+1. List the Movie/TV Series alongwith the star acted in that movie/tv series where Genre Category is "Family".
+
+2. List the	TV Series and the total number of awards won by that TV Series.
+			
+3. Give me a list of movie names with highest gross collection for each genre. Make sure the status is 'Nominated' for those movies.
+
+4. List the movies with total number of tickets sold. Rank in descending order.
+
+5. Give me the list of movies with highest rating 1 year after the release date.

@@ -1,0 +1,75 @@
+CREATE TABLE AwardCategory 
+(AwardCategoryID INT, AwardHeaderID INT, AwardCategoryName STRING);
+
+
+CREATE TABLE AwardDetails 
+(AwardDetailID INT, AwardCategoryID INT, AwardHeaderID INT, ProducerID INT, WriterID INT, DirectorID INT, StarID INT, Status STRING);
+
+
+CREATE TABLE AwardHeader 
+(AwardHeaderID INT, MovieORTVID INT, AwardName STRING, Year INT);
+
+
+CREATE TABLE Director 
+(DirectorID INT, FirstName STRING, LastName STRING, Gender STRING, Dateofbirth STRING, BirthPlace STRING, Bio STRING, Nickname STRING, Height INT, StarSign STRING, IMAGE BINARY);
+
+
+CREATE TABLE DirectorMovie 
+(DirectorID INT, MovieOrTVID INT); 
+
+
+CREATE TABLE ExternalSitesDetails 
+(ExternalSitesDetailsID INT, ExternalSitesHeaderID INT, Link STRING); 
+
+
+CREATE TABLE ExternalSitesHeader  
+(ExternalSitesHeaderID INT, MovieOrTVID INT, Category STRING); 
+
+
+CREATE TABLE FilmingLocationDetails  
+(FilmingLocationDetailId INT, FilmingLocationHeaderID INT, City STRING, State STRING); 
+
+
+CREATE TABLE FilmingLocationHeader  
+(FilmingLocationHeaderID INT, MovieOrTVID INT, CountryName STRING);
+
+
+CREATE TABLE GenreMovie   
+(MovieOrTVID INT, GenreID INT);
+
+
+CREATE TABLE IMDB   
+(IMDBID INT, About STRING, FBLink STRING, TwitterHandle STRING, InstaLink STRING, AppleMarketLink STRING, AndroidLink STRING); 
+
+
+CREATE TABLE MovieORTV (MovieORTVID INT, Type STRING,Name STRING,ParentalGuidence STRING, MetaScore INT, Popularity STRING, Description STRING, Language STRING,
+OriginCountry STRING,Budget BIGINT,NoOfWeeksRunning BIGINT,DomesticCollection BIGINT,GrossCollection BIGINT,Image BINARY,Trailer BINARY);
+					
+					
+CREATE TABLE MovieTheatre   
+(MovieOrTVID INT, TheatreID INT);
+
+
+CREATE TABLE News   
+(NewsID INT, MovieOrTVID INT, Description STRING, Year INT);					
+
+
+CREATE TABLE Payment   
+(TicketID INT, UserAccountID INT, PaymentType STRING);
+
+
+CREATE TABLE PlotSummary   
+(MovieOrTVID INT, AuthorFirstName STRING, AuthorLastName STRING, Description STRING);
+
+
+CREATE TABLE Producer (ProducerID INT, ProdFirstName STRING,ProdLastName STRING,Gender STRING, DateOfBirth INT, BirthPlace STRING, Bio STRING, NickName STRING,
+Height STRING, StarSign BIGINT, Image BINARY);
+						
+						
+CREATE TABLE ProducerMovie
+(ProducerID INT, MOVIEORTVID INT);					
+  
+
+
+
+

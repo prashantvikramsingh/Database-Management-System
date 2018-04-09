@@ -1,0 +1,94 @@
+create table temp_MOVIEORTV	 (col_value STRING);
+create table temp_DIRECTOR	 (col_value STRING);
+create table temp_STAR	 (col_value STRING);
+create table temp_PRODUCER	 (col_value STRING);
+create table temp_WRITER	 (col_value STRING);
+create table temp_PRODUCTIONHOUSE	 (col_value STRING);
+create table temp_PLOTSUMMARY	 (col_value STRING);
+create table temp_RATING	 (col_value STRING);
+create table temp_USERRATING	 (col_value STRING);
+create table temp_EXTERNALSITESHEADER	 (col_value STRING);
+create table temp_EXTERNALSITESDETAILS	 (col_value STRING);
+create table temp_AWARDCATEGORY	 (col_value STRING);
+create table temp_AWARDDETAILS	 (col_value STRING);
+create table temp_REVIEW	 (col_value STRING);
+create table temp_IMDB	 (col_value STRING);
+create table temp_USERACCOUNT	 (col_value STRING);
+create table temp_PAYMENT	 (col_value STRING);
+create table temp_GENRE	 (col_value STRING);
+create table temp_AWARDHEADER	 (col_value STRING);
+create table temp_TECHSPECHEADER	 (col_value STRING);
+create table temp_TECHSPECDETAILS	 (col_value STRING);
+create table temp_RELEASEDATE	 (col_value STRING);
+create table temp_FILMINGLOCATIONDETAILS	 (col_value STRING);
+create table temp_FILMINGLOCATIONHEADER	 (col_value STRING);
+create table temp_TVSHOWSEASON	 (col_value STRING);
+create table temp_TVSEASONEPISODE	 (col_value STRING);
+create table temp_THEATRE	 (col_value STRING);
+create table temp_SHOWTIMES	 (col_value STRING);
+create table temp_TICKETS	 (col_value STRING);
+create table temp_NEWS	 (col_value STRING);
+create table temp_STARNEWS	 (col_value STRING);
+create table temp_STARMOVIE	 (col_value STRING);
+create table temp_DIRECTORMOVIE	 (col_value STRING);
+create table temp_WRITERMOVIE	 (col_value STRING);
+create table temp_PRODUCERMOVIE	 (col_value STRING);
+create table temp_PRODUCERPRODUCTIONHOUSE	 (col_value STRING);
+create table temp_GENREMOVIE	 (col_value STRING);
+create table temp_MOVIETHEATRE	 (col_value STRING);
+
+
+LOAD DATA INPATH '/user/admin/AwardCategory.csv' OVERWRITE INTO TABLE temp_AWARDCATEGORY;
+LOAD DATA INPATH '/user/admin/AwardDetails.csv' OVERWRITE INTO TABLE temp_AWARDDETAILS;
+LOAD DATA INPATH '/user/admin/AwardHeader.csv' OVERWRITE INTO TABLE temp_AWARDHEADER;
+LOAD DATA INPATH '/user/admin/Director.csv' OVERWRITE INTO TABLE temp_DIRECTOR;
+LOAD DATA INPATH '/user/admin/DirectorMovie.csv' OVERWRITE INTO TABLE temp_DIRECTORMOVIE;
+LOAD DATA INPATH '/user/admin/ExternalSitesDetails.csv' OVERWRITE INTO TABLE temp_EXTERNALSITESDETAILS;
+LOAD DATA INPATH '/user/admin/ExternalSitesHeader.csv' OVERWRITE INTO TABLE temp_EXTERNALSITESHEADER;
+LOAD DATA INPATH '/user/admin/FilmingLocationDetails.csv' OVERWRITE INTO TABLE temp_FILMINGLOCATIONDETAILS;
+LOAD DATA INPATH '/user/admin/FilmingLocationHeader.csv' OVERWRITE INTO TABLE temp_FILMINGLOCATIONHEADER;
+LOAD DATA INPATH '/user/admin/Genre.csv' OVERWRITE INTO TABLE temp_GENRE;
+LOAD DATA INPATH '/user/admin/GenreMovie.csv' OVERWRITE INTO TABLE temp_GENREMOVIE;
+LOAD DATA INPATH '/user/admin/IMDB.csv' OVERWRITE INTO TABLE temp_IMDB;
+LOAD DATA INPATH '/user/admin/MovieOrTV.csv' OVERWRITE INTO TABLE temp_MOVIEORTV;
+LOAD DATA INPATH '/user/admin/MovieTheatre.csv' OVERWRITE INTO TABLE temp_MOVIETHEATRE;
+LOAD DATA INPATH '/user/admin/News.csv' OVERWRITE INTO TABLE temp_NEWS;
+LOAD DATA INPATH '/user/admin/Payment.csv' OVERWRITE INTO TABLE temp_PAYMENT;
+LOAD DATA INPATH '/user/admin/PlotSummary.csv' OVERWRITE INTO TABLE temp_PLOTSUMMARY;
+LOAD DATA INPATH '/user/admin/Producer.csv' OVERWRITE INTO TABLE temp_PRODUCER;
+LOAD DATA INPATH '/user/admin/ProducerMovie.csv' OVERWRITE INTO TABLE temp_PRODUCERMOVIE;
+LOAD DATA INPATH '/user/admin/ProducerProductionHouse.csv' OVERWRITE INTO TABLE temp_PRODUCERPRODUCTIONHOUSE;
+LOAD DATA INPATH '/user/admin/ProductionHouse.csv' OVERWRITE INTO TABLE temp_PRODUCTIONHOUSE;
+LOAD DATA INPATH '/user/admin/Rating.csv' OVERWRITE INTO TABLE temp_RATING;
+LOAD DATA INPATH '/user/admin/ReleaseDate.csv' OVERWRITE INTO TABLE temp_RELEASEDATE;
+LOAD DATA INPATH '/user/admin/Review.csv' OVERWRITE INTO TABLE temp_REVIEW;
+LOAD DATA INPATH '/user/admin/Showtimes.csv' OVERWRITE INTO TABLE temp_SHOWTIMES;
+LOAD DATA INPATH '/user/admin/Star.csv' OVERWRITE INTO TABLE temp_STAR;
+LOAD DATA INPATH '/user/admin/StarMovie.csv' OVERWRITE INTO TABLE temp_STARMOVIE;
+LOAD DATA INPATH '/user/admin/StarNews.csv' OVERWRITE INTO TABLE temp_STARNEWS;
+LOAD DATA INPATH '/user/admin/TechSpecDetails.csv' OVERWRITE INTO TABLE temp_TECHSPECDETAILS;
+LOAD DATA INPATH '/user/admin/TechSpecHeader.csv' OVERWRITE INTO TABLE temp_TECHSPECHEADER;
+LOAD DATA INPATH '/user/admin/Theatre.csv' OVERWRITE INTO TABLE temp_THEATRE;
+LOAD DATA INPATH '/user/admin/Tickets.csv' OVERWRITE INTO TABLE temp_TICKETS;
+LOAD DATA INPATH '/user/admin/TVSeasonEpisode.csv' OVERWRITE INTO TABLE temp_TVSEASONEPISODE;
+LOAD DATA INPATH '/user/admin/TVShowSeason.csv' OVERWRITE INTO TABLE temp_TVSHOWSEASON;
+LOAD DATA INPATH '/user/admin/UserAccount.csv' OVERWRITE INTO TABLE temp_USERACCOUNT;
+LOAD DATA INPATH '/user/admin/UserRating.csv' OVERWRITE INTO TABLE temp_USERRATING;
+LOAD DATA INPATH '/user/admin/Writer.csv' OVERWRITE INTO TABLE temp_WRITER;
+LOAD DATA INPATH '/user/admin/WriterMovie.csv' OVERWRITE INTO TABLE temp_WRITERMOVIE;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,222 @@
+insert overwrite table ProducerProductionHouse  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) ProdHouseID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) ProducerID 
+from temp_ProducerProductionHouse;
+
+
+insert overwrite table ProductionHouse  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) ProdHouseID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) PHName,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) PhoneNumber,  
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) PHEmailID  
+from temp_ProductionHouse;
+
+
+insert overwrite table Rating  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) RatingID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) MovieOrTVID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) Rating,  
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) NoOfVotes  
+from temp_Rating;
+
+insert overwrite table Rating  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) ReleaseDateID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) MovieOrTVID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) ReleaseDate,  
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) Country  
+from temp_ReleaseDate;
+
+insert overwrite table Review  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) Description,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) AuthorName,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) Country,  
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) ReviewDate  
+from temp_Review;
+
+insert overwrite table Showtimes  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) ShowTimeID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) TheatreID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) ShowTime,  
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) TotalSeats,
+  regexp_extract(col_value, '^(?:([^,]*),?){5}', 1) TotalSeatsAvailable   
+from temp_Showtimes;
+
+
+insert overwrite table Star  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) StarID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) StarFirstName,  
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) StarLastName,
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) Gender,  
+  regexp_extract(col_value, '^(?:([^,]*),?){5}', 1) DateOfBirth,  
+  regexp_extract(col_value, '^(?:([^,]*),?){6}', 1) BirthPlace,
+regexp_extract(col_value, '^(?:([^,]*),?){7}', 1) Bio,
+regexp_extract(col_value, '^(?:([^,]*),?){8}', 1) Nickname,
+regexp_extract(col_value, '^(?:([^,]*),?){9}', 1) Height,
+regexp_extract(col_value, '^(?:([^,]*),?){10}', 1) StarSign,
+regexp_extract(col_value, '^(?:([^,]*),?){11}', 1) Image
+
+from temp_Star;
+
+
+insert overwrite table ProductionHouse  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) StarID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) MovieORTVID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) CharacterName  
+from temp_StarMovie;
+
+insert overwrite table ProductionHouse  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) StarNewsID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) StarID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) Description  
+from temp_StarNews;
+
+
+insert overwrite table TechSpecDetails  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) TechnicalSpecificationDetailID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) TechnicalSpecificationHeaderID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) Details  
+from temp_TechSpecDetails;
+
+insert overwrite table TechSpecHeader  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) TechnicalSpecificationHeaderID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) MovieORTVID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) Type  
+from temp_TechSpecHeader;
+
+
+insert overwrite table Theatre  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) TheatreID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) TheatreName,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) AddressLine,
+    regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) City,  
+  regexp_extract(col_value, '^(?:([^,]*),?){5}', 1) State,  
+  regexp_extract(col_value, '^(?:([^,]*),?){6}', 1) Country  
+from temp_Theatre;
+
+insert overwrite table Tickets  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) TicketID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) ShowTimeID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) TheatreID,
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) TicketPrice,  
+  regexp_extract(col_value, '^(?:([^,]*),?){5}', 1) NoOfSeatsBooked    
+from temp_Tickets;
+
+
+insert overwrite table TVSeasonEpisode  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) ShowSeasonEpisodeID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) TVShowSeasonID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) EpisodName,
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) AirDate  
+from temp_TVSeasonEpisode;
+
+
+insert overwrite table TVSeasonEpisode  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) TVShowSeasonID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) MovieORTVID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) ShowSeasonNumber  
+from temp_TVShowSeason;
+
+
+insert overwrite table UserAccount  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) UserAccountID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) IMDBID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) UserName,
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) Password,  
+  regexp_extract(col_value, '^(?:([^,]*),?){5}', 1) UserLastName,  
+  regexp_extract(col_value, '^(?:([^,]*),?){6}', 1) UserFirstName,
+  regexp_extract(col_value, '^(?:([^,]*),?){7}', 1) BirthDate,
+  regexp_extract(col_value, '^(?:([^,]*),?){8}', 1) EmailID,
+  regexp_extract(col_value, '^(?:([^,]*),?){9}', 1) Height,
+  regexp_extract(col_value, '^(?:([^,]*),?){10}', 1) StarSign,
+  regexp_extract(col_value, '^(?:([^,]*),?){11}', 1) Image
+from temp_UserAccount;
+
+
+insert overwrite table UserRating  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) UserRatingID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) UserAccountID,
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1) MovieOrTVID,
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) Rating  
+from temp_UserRating;
+
+
+
+insert overwrite table Writer  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) WriterID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1)  FirstName,  
+  regexp_extract(col_value, '^(?:([^,]*),?){3}', 1)  	LastName,
+  regexp_extract(col_value, '^(?:([^,]*),?){4}', 1) Gender,  
+  regexp_extract(col_value, '^(?:([^,]*),?){5}', 1) DateOfBirth,  
+  regexp_extract(col_value, '^(?:([^,]*),?){6}', 1) BirthPlace,
+regexp_extract(col_value, '^(?:([^,]*),?){7}', 1) Biography,
+regexp_extract(col_value, '^(?:([^,]*),?){8}', 1) Nickname,
+regexp_extract(col_value, '^(?:([^,]*),?){9}', 1) Height,
+regexp_extract(col_value, '^(?:([^,]*),?){10}', 1) StarSign,
+regexp_extract(col_value, '^(?:([^,]*),?){11}', 1) Image
+from temp_Writer;
+
+
+insert overwrite table WriterMovie  
+SELECT  
+  regexp_extract(col_value, '^(?:([^,]*),?){1}', 1) MovieOrTVID,  
+  regexp_extract(col_value, '^(?:([^,]*),?){2}', 1) WriterID
+from temp_WriterMovie;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

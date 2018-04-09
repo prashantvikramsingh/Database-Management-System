@@ -1,0 +1,58 @@
+CREATE TABLE ProducerProductionHouse 
+(ProdHouseID INT, ProducerID INT);
+
+CREATE TABLE ProductionHouse
+(ProdHouseID INT,	PHName STRING,	PhoneNumber INT,	PHEmailID STRING);
+
+CREATE TABLE Rating
+(RatingID INT,MovieOrTVID INT,Rating INT,NoOfVotes INT);
+
+
+CREATE TABLE ReleaseDate
+(ReleaseDateID INT,MovieOrTVID INT,ReleaseDate STRING,Country STRING);
+
+CREATE TABLE Review
+(Description STRING,AuthorName STRING,Country STRING,ReviewDate STRING);
+
+CREATE TABLE Showtimes
+(ShowTimeID INT,TheatreID INT,ShowTime STRING,TotalSeats INT,TotalSeatsAvailable INT);
+
+CREATE TABLE Star
+(StarID INT, StarFirstName STRING,StarLastName STRING,Gender STRING,DateOfBirth STRING,BirthPlace STRING,Bio STRING,Nickname STRING,Height STRING,StarSign STRING,Image BINARY);
+
+CREATE TABLE StarMovie
+(StarID STRING,MovieORTVID STRING,CharacterName STRING);
+
+CREATE TABLE StarNews
+(StarNewsID	STRING,StarID STRING,Description STRING);
+
+CREATE TABLE TechSpecDetails
+(TechnicalSpecificationDetailID STRING,	TechnicalSpecificationHeaderID STRING,Details STRING);
+
+CREATE TABLE TechSpecHeader
+(TechnicalSpecificationHeaderID	STRING,MovieORTVID STRING,Type STRING);
+
+CREATE TABLE Theatre
+(TheatreID INT,TheatreName STRING,AddressLine STRING,City STRING,State STRING,Country STRING);
+
+CREATE TABLE Tickets
+(TicketID STRING,ShowTimeID STRING,TheatreID STRING,TicketPrice STRING,NoOfSeatsBooked STRING);
+
+CREATE TABLE TVSeasonEpisode
+(ShowSeasonEpisodeID INT,TVShowSeasonID INT,EpisodName STRING,AirDate STRING);
+
+CREATE TABLE TVShowSeason
+(TVShowSeasonID INT,MovieORTVID INT,ShowSeasonNumber INT);
+
+CREATE TABLE UserAccount
+(UserAccountID INT,IMDBID INT,UserName STRING,Password	STRING,UserLastName STRING,UserFirstName STRING,BirthDate STRING,EmailID STRING,AddressLine1 STRING,City STRING,State STRING,Country STRING);
+
+CREATE TABLE UserRating
+(UserRatingID INT,UserAccountID INT,MovieOrTVID	INT,Rating FLOAT);
+
+CREATE TABLE Writer
+(WriterID INT,FirstName STRING,LastName STRING,Gender STRING,DateofBirth STRING,BirthPlace STRING,Biography	STRING,Nickname STRING,Height FLOAT,StarSign STRING,Image BINARY);
+
+CREATE TABLE WriterMovie
+(MovieOrTVID INT,WriterID INT);
+

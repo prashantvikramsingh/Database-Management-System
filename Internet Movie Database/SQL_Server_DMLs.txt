@@ -1,0 +1,278 @@
+CREATE FUNCTION AverageRating
+(@MovieOrTVID INT) 
+RETURNS Numeric(4,2)
+AS
+BEGIN 
+	Declare @Rating Numeric(4,2);
+	Declare @Name varchar(40);
+	
+	select @Rating = Sum(r.rating*r.noofvotes)/Sum(r.noofvotes) 
+	from	dbo.movieortv as m
+	inner 	join dbo.rating as r
+		on m.@MovieOrTVID = r.@MovieOrTVID;
+		
+	return @Rating
+END;
+
+-------------------------------------------------------------------------
+
+CREATE function UpComing()
+returns table 
+as
+return
+(select m.Name,rd.ReleaseDate from dbo.MovieORTV as m inner join dbo.ReleaseDate as rd on m.MovieORTVID = rd.MovieORTVID
+  where rd.ReleaseDate>getdate()
+);
+
+-------------------------------------------------------------------------
+
+Create Trigger Update_Votes
+on dbo.UserRating
+After Insert, Update
+AS
+BEGIN
+		Declare	@MovieOrTVID Int,
+				@VotePoint Int
+		
+		Select	@MovieOrTVID = MovieOrTVID, @VotePoint = Rating
+		from 	inserted;
+		
+		Update	dbo.rating	
+		set 	NoOfVotes = NoOfVotes + 1
+		where	MovieOrTVID = @MovieOrTVID and Rating = @VotePoint;
+End;
+
+
+--------------------------------------------------------------------------
+
+
+Create Trigger Update_Rating
+on dbo.Rating
+After Insert, Update
+AS
+BEGIN
+		Declare	@MovieOrTVID Int,
+				@Rating decimal(10,2)
+		
+		Select	@MovieOrTVID = MovieOrTVID
+		from 	inserted;
+		
+		Select	@Rating = Sum(r.rating*r.noofvotes)/Sum(r.noofvotes)
+		from	dbo.rating as r
+		where	MovieOrTVID = @MovieOrTVID;
+		
+		Update	dbo.MovieOrTV
+		set 	Rating = @Rating
+		where	MovieOrTVID = @MovieOrTVID;
+End;
+	
+
+--------------------------------------------------------------------------
+
+
+Create Trigger Check_RemainingSeats
+on dbo.Tickets
+Instead Of Insert, Update
+AS
+BEGIN
+		Declare	@Price Int,
+				@NoOfSeats Int,
+				@ShowTimeID Int,
+				@TheatreID Int,
+				@TicketsID Int,
+				@SeatsRemaining Int
+		
+		Select	@Price = TicketPrice, @NoOfSeats = NoOfSeatsBooked, @ShowTimeID = ShowTimesID, @TheatreID = TheatreID, @TicketsID = TicketsID
+		from 	inserted;
+		
+		Select 	@SeatsRemaining = TotalSeatsAvailable
+		from	dbo.showtimes
+		where	TheatreID = @TheatreID and ShowTimesID = @ShowTimeID;
+		
+		if(@SeatsRemaining > @NoOfSeats)
+			begin
+				insert	into	dbo.Tickets
+				values(@TicketsID, @ShowTimeID, @TheatreID, @Price, @NoOfSeats)
+			end
+		else
+			begin
+				rollback;
+			end
+End;
+
+
+---------------------------------------------------------------------------
+
+
+Create Trigger Update_TotalSeats
+on dbo.Tickets
+After Insert, Update
+AS
+BEGIN
+		Declare	@Price Int,
+				@NoOfSeats Int,
+				@ShowTimeID Int,
+				@TheatreID Int,
+				@MovieOrTVID Int
+		
+		Select	@Price = Price, @NoOfSeats = NoOfSeats, @ShowTimeID = ShowTimesID, @TheatreID = TheatreID
+		from 	inserted;
+		
+		Update	dbo.showtimes	
+		set 	TotalSeatsAvailable = TotalSeatsAvailable - @NoOfSeats
+		where	TheatreID = @TheatreID and ShowTimesID = @ShowTimeID;
+End;
+
+-----------------------------------------------------------------------------
+
+Create Trigger Check_Movie
+on dbo.MovieTheatre
+Instead Of Insert, Update
+AS
+BEGIN
+		Declare	
+				@TheatreID Int,
+				@MovieOrTVID Int,
+				@movieCount Int
+		
+		Select	@TheatreID = TheatreID, @MovieOrTVID = MovieOrTVID
+		from 	inserted;
+		
+		Select 	@movieCount = count(*)
+		from	dbo.MovieOrTV
+		where	MovieOrTVID = @MovieOrTVID and Type = 'Movie';
+		
+		if(@movieCount > 0)
+			begin
+				insert	into	dbo.MovieTheatre
+				values(@MovieOrTVID, @TheatreID)
+			end
+		else
+			begin
+				rollback;
+			end
+End;
+
+-------------------------------------------------------------------------------
+
+Create Trigger Check_TV
+on dbo.TVShowSeason
+Instead Of Insert, Update
+AS
+BEGIN
+		Declare	
+				@TVShowSeasonID Int,
+				@MovieOrTVID Int,
+				@ShowSeasonNumber Int,
+				@tvCount Int
+		
+		Select	@TVShowSeasonID = @TVShowSeasonID, @MovieOrTVID = MovieOrTVID, @ShowSeasonNumber = ShowSeasonNumber
+		from 	inserted;
+		
+		Select 	@tvCount = count(*)
+		from	dbo.MovieOrTV
+		where	MovieOrTVID = @MovieOrTVID and Type = 'TV';
+		
+		if(@tvCount > 0)
+			begin
+				insert	into	dbo.TVShowSeason
+				values(@TVShowSeasonID, @MovieOrTVID, @ShowSeasonNumber)
+			end
+		else
+			begin
+				rollback;
+			end
+End;
+
+-----------------------------------------------------------------------------
+
+
+CREATE PROCEDURE sp_full_bkp
+as
+BEGIN
+	DECLARE @tab_name char(50); 
+	DECLARE @q varchar(1500);
+	DECLARE bckup_cursor CURSOR FOR SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_schema='dbo' and table_type='BASE TABLE';
+	DROP DATABASE IF EXISTS IMDB_backup;
+	CREATE DATABASE IMDB_backup;
+	open bckup_cursor;
+		FETCH NEXT FROM bckup_cursor into @tab_name;
+			while(@@FETCH_STATUS=0)
+			BEGIN
+				SET @q='DROP TABLE IF EXISTS IMDB_backup.'+ @tab_name;
+				EXECUTE (@q);
+				SET @q='Select * into IMDB_backup.dbo.' + @tab_name +' from IMDB.dbo.'+ @tab_name + ' WHERE 1=1';
+				EXECUTE (@q);
+				FETCH NEXT FROM bckup_cursor into @tab_name;
+			END
+	close bckup_cursor;
+	deallocate bckup_cursor;
+END
+
+----------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+create view TOPActressView 
+as
+select TOP 50 count(*) as AwardCount, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from Star as s
+inner join AwardDetails as ad
+	on s.StarID = ad.StarID
+where ad.Status = 'Won' and s.Gender = 'F'
+group by concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName)))
+order by AwardCount desc, StarName;
+
+create view TOPActorsView 
+as
+select TOP 50 count(*) as AwardCount, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from Star as s
+inner join AwardDetails as ad
+	on s.StarID = ad.StarID
+where ad.Status = 'Won' and s.Gender = 'M'
+group by concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName)))
+order by AwardCount desc, StarName;
+
+
+create view TOPDirectorsView 
+as
+select TOP 50 count(*) as AwardCount, concat(rtrim(d.DirFirstName),concat(' ',ltrim(d.DirLastName))) as DirectorName
+from Director as d
+inner join AwardDetails as ad
+	on d.DirectorID = ad.DirectorID
+where ad.Status = 'Won'
+group by concat(rtrim(d.DirFirstName),concat(' ',ltrim(d.DirLastName)))
+order by AwardCount desc, DirectorName;
+
+
+create view TOPProducersView 
+as
+select TOP 50 count(*) as AwardCount, concat(rtrim(p.ProdFirstName),concat(' ',ltrim(p.ProdLastName))) as ProducerName
+from Producer as p
+inner join AwardDetails as ad
+	on p.ProducerID = ad.ProducerID
+where ad.Status = 'Won'
+group by concat(rtrim(p.ProdFirstName),concat(' ',ltrim(p.ProdLastName)))
+order by AwardCount desc, ProducerName;
+
+create view TOPPopularTVOrMovieView 
+as
+select top 50 m.Name, m.Popularity
+from MovieOrTV as m
+order by m.Popularity;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
